@@ -27,6 +27,49 @@ function shouldCompress(req, res) {
 
 app.post('/send/mail', async (req, res) => {
     try {
+        const { name, email, subject, message, company } = req.body;
+
+        var transporter = nodeMailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASS
+            }
+        });
+
+        var mailOptions = {
+            from: process.env.EMAIL,
+            to: process.env.EMAIL,
+            subject: subject,
+            html: `
+            <h2 style="margin-left: 50%;">Message</h2>
+            <br/>
+            <h3>Subject : ${subject}</h3>
+            <h3>Hello, I am ${name} and here is my contact ${email}</h3>
+            <h3>Company : ${company}</h3>
+            <p>${message}</p> 
+            <br/>
+            `
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+                throw new Error('Email not sent.')
+            }
+
+            console.log(info)
+        });
+
+        return res.json({ success: true });
+    } catch (e) {
+        console.log(e);
+        res.json({ error: e.message });
+    }
+});
+
+app.post('/send/ops/mail', async (req, res) => {
+    try {
         const { name, email, subject, message } = req.body;
 
         var transporter = nodeMailer.createTransport({
@@ -67,6 +110,7 @@ app.post('/send/mail', async (req, res) => {
         res.json({ error: e.message });
     }
 });
+
 
 app.post('/apply', async (req, res) => {
     try {
