@@ -222,7 +222,7 @@ app.put('/upload/resume', upload.single('resume'), function (req, res, next) {
 
 app.post('/paragon/send/mail', async (req, res) => {
     try {
-        const { name, email, phone, subject, message } = req.body;
+        const { name, email, phone, message } = req.body;
 
         var transporter = nodeMailer.createTransport({
             service: 'gmail',
@@ -234,14 +234,13 @@ app.post('/paragon/send/mail', async (req, res) => {
 
         var mailOptions = {
             from: process.env.EMAIL,
-            to: process.env.EMAIL,
-            subject: 'Contact Information',
+            to: process.env.REC_EMAIL,
+            subject: name,
             html: `
             <br/>
             <h4>Name : ${name}</h4>
             <h4>Email : ${email}</h4>
             <h4>Phone : ${phone}</h4>
-            <h4>Subject: ${subject}</h4>
             <p>${message}</p> 
             <br/>
             `
