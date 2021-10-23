@@ -237,7 +237,6 @@ app.post('/paragon/send/mail', async (req, res) => {
             to: process.env.EMAIL,
             subject: 'Contact Information',
             html: `
-            <h2 style="textAlign: center;">Employment Details </h2>
             <br/>
             <h4>Name : ${name}</h4>
             <h4>Email : ${email}</h4>
