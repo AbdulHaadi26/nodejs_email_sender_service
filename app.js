@@ -219,6 +219,49 @@ app.put('/upload/resume', upload.single('resume'), function (req, res, next) {
     });
 })
 
+
+app.post('/paragon/send/mail', async (req, res) => {
+    try {
+        const { name, email, phone, subject, message } = req.body;
+
+        var transporter = nodeMailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASS
+            }
+        });
+
+        var mailOptions = {
+            from: process.env.EMAIL,
+            to: process.env.EMAIL,
+            subject: 'Contact Information',
+            html: `
+            <h2 style="textAlign: center;">Employment Details </h2>
+            <br/>
+            <h4>Name : ${name}</h4>
+            <h4>Email : ${email}</h4>
+            <h4>Phone : ${phone}</h4>
+            <h4>Subject: ${subject}</h4>
+            <p>${message}</p> 
+            <br/>
+            `
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+                throw new Error('Email not sent.')
+            }
+
+            return res.json({ success: true });
+        });
+    } catch (e) {
+        console.log(e);
+        res.json({ error: e.message });
+    }
+});
+
 http.createServer(app).listen(process.env.PORT);
 
 
