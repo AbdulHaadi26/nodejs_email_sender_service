@@ -6,6 +6,9 @@
 .pnp.js
 .env
 
+.credentials
+.credentials.json
+
 # testing
 /coverage
 

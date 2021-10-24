@@ -10,6 +10,7 @@ const compression = require('compression');
 const nodeMailer = require('nodemailer');
 const upload = require('./multer');
 const path = require('path');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 //Middleware functions
 app.use(express.json({ limit: '100mb' }));
@@ -222,7 +223,7 @@ app.put('/upload/resume', upload.single('resume'), function (req, res, next) {
 
 app.post('/paragon/send/mail', async (req, res) => {
     try {
-        const { name, email, phone, message } = req.body;
+        const { name, email, phone, message, tier } = req.body;
 
         var transporter = nodeMailer.createTransport({
             service: 'gmail',
@@ -246,19 +247,54 @@ app.post('/paragon/send/mail', async (req, res) => {
             `
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        let data = {
+            name,
+            email,
+            phone,
+            tier
+        }
+
+        try {
+            await googleSpreadSheet(data);
+        } catch (e) {
+            console.log(e)
+        }
+
+
+        tier !== 'Free' ? transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
                 throw new Error('Email not sent.')
             }
 
             return res.json({ success: true });
-        });
+        }) : res.json({ success: true });
+
     } catch (e) {
         console.log(e);
         res.json({ error: e.message });
     }
 });
+
+async function googleSpreadSheet(data) {
+    const doc = new GoogleSpreadsheet(process.env.spread_sheet);
+    await doc.useServiceAccountAuth({
+        client_email: process.env.client_email,
+        private_key: process.env.private_key,
+    });
+
+    await doc.loadInfo(); // loads document properties and worksheets
+
+    const sheet = doc.sheetsByTitle['Paragon'];
+
+    try {
+        await sheet.addRow(data);
+    } catch (e) {
+        const sheet = await doc.addSheet({ headerValues: ['name', 'email', 'phone', 'tier'] });
+        await sheet.updateProperties({ title: 'Paragon' });
+        await sheet.addRow(data);
+    }
+}
 
 http.createServer(app).listen(process.env.PORT);
 
