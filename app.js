@@ -280,7 +280,7 @@ async function googleSpreadSheet(data) {
     const doc = new GoogleSpreadsheet(process.env.spread_sheet);
     await doc.useServiceAccountAuth({
         client_email: process.env.client_email,
-        private_key: process.env.private_key,
+        private_key: process.env.private_key.replace(new RegExp('\\\\n', '\g'), '\n'),
     });
 
     await doc.loadInfo(); // loads document properties and worksheets
