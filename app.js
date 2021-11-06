@@ -410,7 +410,7 @@ app.post('/stormer/send/mail', async (req, res) => {
 
         var mailOptions = {
             from: process.env.EMAIL,
-            to: process.env.EMAIL,
+            to: process.env.REC_EMAIL,
             subject: 'Stormer-AG',
             html: `
             <div style="display: flex; flex-direction: row; justify-content: center;">
