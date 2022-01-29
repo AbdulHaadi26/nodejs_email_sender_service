@@ -25,6 +25,17 @@ function shouldCompress(req, res) {
     return compression.filter(req, res);
 }
 
+let baseUrl = `https://graph.facebook.com/v11.0/${process.env.PixelId}/events?access_token=${process.env.PixelToken}`;
+
+app.post("/paragon/send/event/fb", async (req, res) => {
+  try {
+    let body = req.body;
+    await Axios.post(baseUrl, body);
+    res.sendStatus(200);
+  } catch (e) {
+    res.sendStatus(400);
+  }
+});
 
 app.post('/send/mail', async (req, res) => {
     try {
