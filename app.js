@@ -33,7 +33,6 @@ app.post("/paragon/send/event/fb", async (req, res) => {
     await Axios.post(baseUrl, body);
     res.sendStatus(200);
   } catch (e) {
-      console.log(e)
     res.sendStatus(400);
   }
 });
