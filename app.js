@@ -25,7 +25,7 @@ function shouldCompress(req, res) {
     return compression.filter(req, res);
 }
 
-let baseUrl = `https://graph.facebook.com/v11.0/${process.env.PixelId}/events?access_token=${process.env.PixelToken}`;
+let baseUrl = process.env.PixelUrl;
 
 app.post("/paragon/send/event/fb", async (req, res) => {
   try {
