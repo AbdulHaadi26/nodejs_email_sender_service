@@ -10,6 +10,7 @@ const compression = require('compression');
 const nodeMailer = require('nodemailer');
 const upload = require('./multer');
 const path = require('path');
+const Axios = require("axios");
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 //Middleware functions
@@ -33,7 +34,6 @@ app.post("/paragon/send/event/fb", async (req, res) => {
     await Axios.post(baseUrl, body);
     res.sendStatus(200);
   } catch (e) {
-      console.log(e)
     res.sendStatus(400);
   }
 });
